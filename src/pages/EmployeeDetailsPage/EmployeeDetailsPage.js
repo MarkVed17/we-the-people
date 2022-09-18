@@ -1,11 +1,12 @@
 import { DataGrid } from "@mui/x-data-grid";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import "./EmployeeDetailsPage.css";
 
 const EmployeeDetailsPage = () => {
   const [empDetails, setEmpDetails] = useState([]);
   const { name } = useParams();
+  const navigate = useNavigate();
 
   useEffect(() => {
     (async () => {
@@ -72,6 +73,10 @@ const EmployeeDetailsPage = () => {
 
   return (
     <div className="employee-details-table">
+      <button onClick={() => navigate("/")} className="back-btn">
+        <span className="material-symbols-outlined">arrow_back_ios_new</span>
+        <span>Back</span>
+      </button>
       <DataGrid
         rows={rows}
         columns={columns}
