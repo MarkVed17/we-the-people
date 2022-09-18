@@ -52,7 +52,7 @@ const EmployeesListingPage = () => {
   return (
     <div className="employees-table">
       <button onClick={() => navigate("/overview")} className="link">
-        <span class="material-symbols-outlined">visibility</span>
+        <span className="material-symbols-outlined">visibility</span>
         <span>View Employee Hierarchy</span>
       </button>
       <DataGrid
