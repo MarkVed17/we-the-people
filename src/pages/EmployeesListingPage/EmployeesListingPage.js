@@ -1,14 +1,16 @@
 import { DataGrid } from "@mui/x-data-grid";
+import { useNavigate } from "react-router-dom";
 import { useEmpData } from "../../contexts";
+import "./EmployeesListingPage.css";
 
 const EmployeesListingPage = () => {
   const { empData } = useEmpData();
 
   const rows = empData;
   const columns = [
-    { field: "id", headerName: "ID", type: "text" },
-    { field: "first_name", headerName: "First name", type: "text" },
-    { field: "last_name", headerName: "Last name", type: "text" },
+    { field: "id", headerName: "ID", type: "string" },
+    { field: "first_name", headerName: "First name", type: "string" },
+    { field: "last_name", headerName: "Last name", type: "string" },
     {
       field: "date_of_birth",
       headerName: "D.O.B",
@@ -17,7 +19,7 @@ const EmployeesListingPage = () => {
     {
       field: "address",
       headerName: "Address",
-      type: "text",
+      type: "string",
     },
     {
       field: "date_of_joining",
@@ -34,29 +36,29 @@ const EmployeesListingPage = () => {
     {
       field: "designation",
       headerName: "Designation",
-      type: "text",
+      type: "string",
+      flex: 1,
     },
   ];
 
+  const navigate = useNavigate();
+
+  const cellClickHandler = (params) => {
+    if (params.field === "id") {
+      navigate(`/employee/${params.row.first_name}`);
+    }
+  };
+
   return (
-    <div
-      style={{
-        width: "56%",
-        position: "absolute",
-        top: "50%",
-        left: "50%",
-        transform: "translate(-50%, -50%)",
-      }}
-    >
+    <div className="employees-table">
       <DataGrid
         rows={rows}
         columns={columns}
         pageSize={10}
-        // rowsPerPageOptions={[5]}
         checkboxSelection
-        autoHeight="true"
-        autoPageSize="true"
-        // loading={empData ? "false" : "true"}
+        autoHeight={true}
+        autoPageSize={true}
+        onCellClick={cellClickHandler}
       />
     </div>
   );
