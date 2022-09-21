@@ -1,12 +1,20 @@
 import { DataGrid } from "@mui/x-data-grid";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useEmpData } from "../../contexts";
 import "./EmployeesListingPage.css";
 
 const EmployeesListingPage = () => {
   const { empData } = useEmpData();
+  const [range, setRange] = useState({ lower: 0, upper: 99999999999 });
 
-  const rows = empData;
+  const filteredData = empData.filter(
+    (emp) =>
+      parseFloat(emp.salary.replace(/,/g, "")) >= range.lower &&
+      parseFloat(emp.salary.replace(/,/g, "")) <= range.upper
+  );
+
+  const rows = filteredData;
   const columns = [
     { field: "id", headerName: "ID", type: "string" },
     { field: "first_name", headerName: "First name", type: "string" },
@@ -55,6 +63,15 @@ const EmployeesListingPage = () => {
         <span className="material-symbols-outlined">visibility</span>
         <span>View Employee Hierarchy</span>
       </button>
+      <input
+        onChange={(e) => setRange({ ...range, lower: Number(e.target.value) })}
+        placeholder="Lower Bound"
+      />
+      <input
+        onChange={(e) => setRange({ ...range, upper: Number(e.target.value) })}
+        placeholder="Upper Bound"
+      />
+
       <DataGrid
         rows={rows}
         columns={columns}
