@@ -57,7 +57,6 @@ const EmployeeHierarchyPage = () => {
       parseFloat(emp.salary.replace(/,/g, "")) >= range.lower &&
       parseFloat(emp.salary.replace(/,/g, "")) <= range.upper
   );
-  console.log(filteredEmpData);
 
   const data = listToTree(filteredEmpData);
 
