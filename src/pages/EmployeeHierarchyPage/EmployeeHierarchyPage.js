@@ -7,8 +7,11 @@ import { useState } from "react";
 const EmployeeHierarchyPage = () => {
   const { empData } = useEmpData();
   const rename = require("deep-rename-keys");
-  const [range, setRange] = useState({ lower: 0, upper: 99999999999 });
-
+  const [inputs, setInputs] = useState({
+    lowerInput: 0,
+    upperInput: 0,
+  });
+  const [range, setRange] = useState({ lower: 0, upper: 0 });
   let myManager = {};
 
   // Create a Managers List
@@ -37,19 +40,26 @@ const EmployeeHierarchyPage = () => {
       } else if (node.manager_id === "") {
         roots.push(node);
       } else {
-        list[map[myManager[node.manager_id]]].children.push(node);
+        // if Manager doesn't exists then find a new Manager
+        let newManager = node.manager_id;
+
+        while (map.hasOwnProperty(newManager) === false) {
+          newManager = myManager[newManager];
+        }
+        list[map[newManager]].children.push(node);
       }
     }
     return roots;
   };
 
-  const filteredData = empData.filter(
+  const filteredEmpData = empData.filter(
     (emp) =>
       parseFloat(emp.salary.replace(/,/g, "")) >= range.lower &&
       parseFloat(emp.salary.replace(/,/g, "")) <= range.upper
   );
+  console.log(filteredEmpData);
 
-  const data = listToTree(filteredData);
+  const data = listToTree(filteredEmpData);
 
   // Rename "first_name" key of all employees & its children (manager & employees under the manager) to "label" for <DropdownTreeSelect>
   const employeeTree = data.map((emp) =>
@@ -62,13 +72,30 @@ const EmployeeHierarchyPage = () => {
   return (
     <div className="hierarchy-dropdown">
       <input
-        onChange={(e) => setRange({ ...range, lower: Number(e.target.value) })}
+        onChange={(e) =>
+          setInputs({ ...inputs, lowerInput: Number(e.target.value) })
+        }
         placeholder="Lower Bound"
       />
       <input
-        onChange={(e) => setRange({ ...range, upper: Number(e.target.value) })}
+        onChange={(e) =>
+          setInputs({ ...inputs, upperInput: Number(e.target.value) })
+        }
         placeholder="Upper Bound"
       />
+      <button
+        onClick={() =>
+          setRange({
+            lower: inputs.lowerInput,
+            upper: inputs.upperInput,
+          })
+        }
+        disabled={
+          inputs.upperInput < 30000 || inputs.lowerInput > inputs.upperInput // Alex has a 30000 as the salary & if Alex is filtered then there's no hierarchy
+        }
+      >
+        Filter
+      </button>
       <DropdownTreeSelect data={employeeTree} />
     </div>
   );
